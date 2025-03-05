@@ -1,0 +1,201 @@
+<!-- order.ejs -->
+
+<%- include('./partials/header') %>
+
+<body class="container-fluid p-1">
+
+    <nav class="container-fluid pt-lg-5 mt-2">
+        <div class="row ">
+            <div class="col-6 text-end">
+                <p class="h2 text-uppercase font-weight-bold text-info ">Orders</p>
+            </div>
+
+            <div class="col text-end">
+                <button type="button" class="btn btn-warning text-white" id="addOrderButton" data-bs-toggle="modal"
+                    data-bs-target="#addOrderModal">Add
+                    Order</button>
+            </div>
+            <div class="col text-nowrap">
+                <form class="d-flex" action="/api/orders/searchOrder" method="POST">
+                    <input class="form-control me-2" type="search" id="OrderID" name="OrderID"
+                        placeholder="Search" aria-label="Search" required>
+                    <button class="btn btn-outline-info" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+
+    </nav>
+
+    <div class="container-fluid pt-3">
+
+        <div class="container mw-100">
+            <table class="table table-striped table-light table-sm table-bordered mw-100 ">
+                <thead>
+                    <th class="text-uppercase text-center text-info">Order ID</th>
+                    <th class="text-uppercase text-center text-info">Customer ID</th>
+                    <th class="text-uppercase text-center text-info">Order Date</th>
+                    <th class="text-uppercase text-center text-info">Edit</th>
+                    <th class="text-uppercase text-center text-info">Delete</th>
+                </thead>
+
+                <tbody>
+                    <% orders.forEach(function(order){ %>
+                        <% const id = order.OrderID; %>
+                            <tr>
+                                <td>
+                                    <%= id %>
+                                </td>
+                                <td>
+                                    <%= order.CustomerID %>
+                                </td>
+                                <td>
+                                    <%= order.OrderDate %>
+                                </td>
+
+                                <!-- Update Order Form Modal -->
+                                <td class="text-end "><button type="button" class="btn btn-info text-white"
+                                        data-bs-toggle="modal" data-bs-target="#updateOrderModal_<%= id %>">
+                                        Update
+                                        Order</button>
+                                </td>
+
+                                <div class="modal fade" id="updateOrderModal_<%= id %>" tabindex="-1" role="dialog"
+                                    aria-labelledby="updateOrderModalLabel_<%= id %>" aria-hidden="true">
+                                    <form action="/api/orders/update/<%= id %>" method="POST">
+
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="updateOrderModalLabel_<%= id %>">
+                                                        Update
+                                                        Order
+                                                    </h5>
+                                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <!-- Input fields for updating an order -->
+                                                    <label for="updateCustomerID">Customer ID:</label>
+                                                    <input type="text" id="updateCustomerID" name="CustomerID"
+                                                        required><br>
+
+                                                    <label for="updateOrderDate">Order Date:</label>
+                                                    <input type="text" id="updateOrderDate" name="OrderDate"
+                                                        required><br>
+
+                                                    <input type="hidden" value="<%= id %>" id="updateOrderID"
+                                                        name="OrderID">
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary"
+                                                        id="updateOrderBtn">Update
+                                                        Order</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <td class="text-end "><button type="button" class="btn btn-dark btn-sm"
+                                        data-bs-toggle="modal" data-bs-target="#deleteOrderModal_<%= id %>">
+                                        Delete Order</button>
+                                </td>
+                                <div class="modal fade" id="deleteOrderModal_<%= id %>" tabindex="-1" role="dialog"
+                                    aria-labelledby="deleteOrderModalLabel_<%= id %>" aria-hidden="true">
+                                    <form action="/api/orders/delete/<%= id %>" method="POST">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteOrderModalLabel_<%= id %>">
+                                                        Delete
+                                                        Order
+                                                    </h5>
+                                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+
+                                                    <!-- Input fields for updating an order -->
+                                                    <div class="h7">
+                                                        Are you sure you want to permanently delete an order record?
+                                                    </div>
+                                                    <input type="hidden" value="<%= id %>" id="deleteOrderID"
+                                                        name="OrderID">
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-danger"
+                                                        id="deleteOrderBtn">Delete
+                                                        Order</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                            </tr>
+                            <% }); %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add Order Form Modal -->
+        <div class="modal fade" id="addOrderModal" tabindex="-1" role="dialog"
+            aria-labelledby="addOrderModalLabel" aria-hidden="true">
+
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addOrderModalLabel">Add Order</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="/api/orders/" method="POST">
+                        <div class="modal-body">
+
+                            <!-- Input fields for adding an order -->
+                            <label for="addCustomerID">Customer ID:</label>
+                            <input type="text" id="addCustomerID" name="CustomerID" required><br>
+
+                            <label for="addOrderDate">Order Date:</label>
+                            <input type="text" id="addOrderDate" name="OrderDate" required><br>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" id="addOrderBtn" class="btn btn-success"
+                                data-bs-toggle="modal" data-bs-target="#addSuccessModal">Add Order</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Order Added Successfully Modal -->
+        <div class="modal fade" id="addSuccessModal" tabindex="-1" aria-labelledby="addSuccessModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p>Order added successfully.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

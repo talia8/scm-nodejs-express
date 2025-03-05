@@ -1,0 +1,203 @@
+<!-- productorder.ejs -->
+
+<%- include('./partials/header') %>
+
+<body class="container-fluid p-1">
+
+    <nav class="container-fluid pt-lg-5 mt-2">
+        <div class="row ">
+            <div class="col-6 text-end">
+                <p class="h3 text-uppercase font-weight-bold text-info ">Product Orders</p>
+            </div>
+
+            <div class="col text-end">
+                <button type="button" class="btn btn-warning text-white" id="addProductOrderButton"
+                    data-bs-toggle="modal" data-bs-target="#addProductOrderModal">Add Product Order</button>
+            </div>
+            <div class="col text-nowrap">
+                <form class="d-flex" action="/api/productorders/searchProductOrder" method="POST">
+                    <input class="form-control me-2" type="search" id="OrderID" name="OrderID" placeholder="Search"
+                        aria-label="Search" required>
+                    <button class="btn btn-outline-info" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+
+    </nav>
+
+    <div class="container-fluid pt-3">
+
+        <div class="container mw-100">
+            <table class="table table-striped table-light table-sm table-bordered mw-100 ">
+                <thead>
+                    <th class="text-uppercase text-center text-info">Order ID</th>
+                    <th class="text-uppercase text-center text-info">Product ID</th>
+                    <th class="text-uppercase text-center text-info">Quantity</th>
+                    <th class="text-uppercase text-center text-info">Edit</th>
+                    <th class="text-uppercase text-center text-info">Delete</th>
+                </thead>
+
+                <tbody>
+                    <% productorders.forEach(function(productorder){ %>
+                    <% const productOrderID = productorder.OrderID; %>
+
+                    <tr>
+                        <td>
+                            <%= productorder.OrderID %>
+                        </td>
+                        <td>
+                            <%= productorder.ProductID %>
+                        </td>
+                        <td>
+                            <%= productorder.Quantity %>
+                        </td>
+
+                        <!-- Update Product Order Form Modal -->
+                        <td class="text-end "><button type="button" class="btn btn-info text-white"
+                                data-bs-toggle="modal" data-bs-target="#updateProductOrderModal_<%= productOrderID %>">
+                                Update Product Order</button>
+                        </td>
+
+                        <div class="modal fade" id="updateProductOrderModal_<%= productOrderID %>" tabindex="-1" role="dialog"
+                            aria-labelledby="updateProductOrderModalLabel_<%= productOrderID %>" aria-hidden="true">
+                            <form action="/api/productorders/update/<%= productOrderID %>" method="POST">
+
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="updateProductOrderModalLabel_<%= productOrderID %>">
+                                                Update Product Order
+                                            </h5>
+                                            <button type="button" class="close" data-bs-dismiss="modal"
+                                                aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- Input fields for updating a product order -->
+                                            <label for="updateProductOrderOrderID">Order ID:</label>
+                                            <input type="text" id="updateProductOrderOrderID" name="OrderID"
+                                                required><br>
+
+                                            <label for="updateProductOrderProductID">Product ID:</label>
+                                            <input type="text" id="updateProductOrderProductID" name="ProductID"
+                                                required><br>
+
+                                            <label for="updateProductOrderQuantity">Quantity:</label>
+                                            <input type="text" id="updateProductOrderQuantity" name="Quantity"
+                                                required><br>
+
+                                            <input type="hidden" value="<%= productOrderID %>" id="updateProductOrderID"
+                                                name="productOrderID">
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary"
+                                                id="updateProductOrderBtn">Update Product Order</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Delete Product Order Form Modal -->
+                        <td class="text-end "><button type="button" class="btn btn-dark btn-sm"
+                                data-bs-toggle="modal" data-bs-target="#deleteProductOrderModal_<%= productOrderID %>">
+                                Delete Product Order</button>
+                        </td>
+                        <div class="modal fade" id="deleteProductOrderModal_<%= productOrderID %>" tabindex="-1" role="dialog"
+                            aria-labelledby="deleteProductOrderModalLabel_<%= productOrderID %>" aria-hidden="true">
+                            <form action="/api/productorders/delete/<%= productOrderID %>" method="POST">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteProductOrderModalLabel_<%= productOrderID %>">
+                                                Delete Product Order
+                                            </h5>
+                                            <button type="button" class="close" data-bs-dismiss="modal"
+                                                aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            <!-- Input fields for deleting a product order -->
+                                            <div class="h7">
+                                                Are you sure you want to permanently delete a product order record?
+                                            </div>
+                                            <input type="hidden" value="<%= productOrderID %>" id="deleteProductOrderID"
+                                                name="OrderID">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-danger"
+                                                id="deleteProductOrderBtn">Delete Product Order</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add Product Order Form Modal -->
+        <div class="modal fade" id="addProductOrderModal" tabindex="-1" role="dialog"
+            aria-labelledby="addProductOrderModalLabel" aria-hidden="true">
+
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addProductOrderModalLabel">Add Product Order</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="/api/productorders/" method="POST">
+                        <div class="modal-body">
+
+                            <!-- Input fields for adding a product order -->
+                            <label for="addProductOrderOrderID">Order ID:</label>
+                            <input type="text" id="addOrderOrderOrderID" name="OrderID" required><br>
+
+                            <label for="addProductOrderProductID">Product ID:</label>
+                            <input type="text" id="addProductOrderProductID" name="ProductID" required><br>
+
+                            <label for="addProductOrderQuantity">Quantity:</label>
+                            <input type="text" id="addProductOrderQuantity" name="Quantity" required><br>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" id="addProductOrderBtn" class="btn btn-success"
+                                data-bs-toggle="modal" data-bs-target="#addSuccessModal">Add Product Order</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Product Order Added Successfully Modal -->
+        <div class="modal fade" id="addSuccessModal" tabindex="-1" aria-labelledby="addSuccessModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p>Product Order added successfully.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>
